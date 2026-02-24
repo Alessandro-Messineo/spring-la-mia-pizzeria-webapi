@@ -1,8 +1,9 @@
 package org.lessons.java.spring_la_mia_pizzeria_webapi.controller;
 
 import org.lessons.java.spring_la_mia_pizzeria_webapi.model.SpecialOffer;
-import org.lessons.java.spring_la_mia_pizzeria_webapi.repository.PizzaRepository;
-import org.lessons.java.spring_la_mia_pizzeria_webapi.repository.SpecialOfferRepository;
+
+import org.lessons.java.spring_la_mia_pizzeria_webapi.service.PizzaService;
+import org.lessons.java.spring_la_mia_pizzeria_webapi.service.SpecialOfferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,17 +22,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class SpecialOfferController {
 
     @Autowired
-    private SpecialOfferRepository specialOfferRepository;
+    private SpecialOfferService specialOfferService;
 
     @Autowired
-    PizzaRepository pizzaRepository;
+    private PizzaService pizzaService;
 
     @GetMapping("/create/{id}")
     public String create(@PathVariable Integer id, Model model) {
 
         SpecialOffer specialOffer = new SpecialOffer();
 
-        specialOffer.setPizza(pizzaRepository.findById(id).get());
+        specialOffer.setPizza(pizzaService.findById(id));
 
         model.addAttribute("specialOffer", specialOffer);
         return "special-offers/form-special-offer";
@@ -47,14 +48,14 @@ public class SpecialOfferController {
 
         Integer idPizza = formOffer.getPizza().getId();
 
-        specialOfferRepository.save(formOffer);
+        specialOfferService.save(formOffer);
         return "redirect:/pizza/" + idPizza;
     }
 
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable Integer id, Model model) {
 
-        model.addAttribute("specialOffer", specialOfferRepository.findById(id).get());
+        model.addAttribute("specialOffer", specialOfferService.findById(id));
         model.addAttribute("edit", true);
 
         return "special-offers/form-special-offer";
@@ -70,7 +71,7 @@ public class SpecialOfferController {
 
         Integer idPizza = formOffer.getPizza().getId();
 
-        specialOfferRepository.save(formOffer);
+        specialOfferService.save(formOffer);
 
         return "redirect:/pizza/" + idPizza;
     }
@@ -78,11 +79,11 @@ public class SpecialOfferController {
     @PostMapping("/delete/{id}")
     public String delete(@PathVariable Integer id, Model model) {
 
-        SpecialOffer offer = specialOfferRepository.findById(id).get();
+        SpecialOffer offer = specialOfferService.findById(id);
 
         Integer idPizza = offer.getPizza().getId();
 
-        specialOfferRepository.deleteById(id);
+        specialOfferService.delete(id);
 
         return "redirect:/pizza/" + idPizza;
     }
