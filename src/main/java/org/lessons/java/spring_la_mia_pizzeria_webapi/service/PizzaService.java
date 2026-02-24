@@ -41,4 +41,8 @@ public class PizzaService {
         }
         pizzaRepository.delete(pizza);
     }
+
+    public boolean existsById(Integer id) {
+        return pizzaRepository.existsById(id);
+    }
 }
